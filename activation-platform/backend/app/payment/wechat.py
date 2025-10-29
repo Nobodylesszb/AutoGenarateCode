@@ -11,7 +11,7 @@ import requests
 from typing import Dict, Any, Optional
 from datetime import datetime
 
-from .base import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
+from . import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
 
 class WeChatPaymentProvider(PaymentProvider):
     """微信支付提供商"""

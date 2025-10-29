@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     ALIPAY_PUBLIC_KEY: Optional[str] = None
     ALIPAY_NOTIFY_URL: Optional[str] = None
     
+    # Ping++ 配置
+    PINGXX_API_KEY: Optional[str] = None
+    PINGXX_APP_ID: Optional[str] = None
+    PINGXX_PRIVATE_KEY: Optional[str] = None  # 私钥内容或路径
+    PINGXX_NOTIFY_URL: Optional[str] = None
+    
     # 激活码配置
     ACTIVATION_CODE_LENGTH: int = 32  # 增加长度到32位
     ACTIVATION_CODE_PREFIX: str = "ACT"
@@ -50,6 +56,11 @@ class Settings(BaseSettings):
     # 日志配置
     LOG_LEVEL: str = "INFO"
     LOG_FILE: str = "logs/app.log"
+    
+    # 管理后台默认账号（首次登录自动创建）
+    ADMIN_DEFAULT_USERNAME: str = "admin"
+    ADMIN_DEFAULT_EMAIL: str = "admin@example.com"
+    ADMIN_DEFAULT_PASSWORD: str = "admin123"
     
     class Config:
         env_file = ".env"

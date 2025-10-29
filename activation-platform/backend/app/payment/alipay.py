@@ -12,7 +12,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 from urllib.parse import urlencode
 
-from .base import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
+from . import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
 
 class AlipayPaymentProvider(PaymentProvider):
     """支付宝支付提供商"""

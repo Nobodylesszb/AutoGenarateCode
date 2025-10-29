@@ -9,9 +9,11 @@ class HttpClient {
   
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`
+    const token = localStorage.getItem('auth_token')
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers
       },
       ...options
@@ -62,6 +64,13 @@ const httpClient = new HttpClient(API_BASE_URL)
 
 // API 服务
 export const api = {
+  // 认证
+  auth: {
+    login: (username, password) => httpClient.request('/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password })
+    })
+  },
   // 激活码相关
   activation: {
     // 生成激活码
@@ -124,7 +133,7 @@ export const api = {
   // 产品相关
   products: {
     // 获取产品列表
-    getProducts: () => httpClient.get('/api/v1/products'),
+    getProducts: () => httpClient.get('/api/v1/activation/products'),
     
     // 创建产品
     createProduct: (data) => httpClient.post('/api/v1/products', data),
@@ -137,30 +146,13 @@ export const api = {
   },
   
   // 用户认证
-  auth: {
-    // 登录
-    login: (username, password) => 
-      httpClient.post('/api/v1/auth/login', { username, password }),
-    
-    // 注册
-    register: (data) => httpClient.post('/api/v1/auth/register', data),
-    
-    // 获取当前用户信息
-    getCurrentUser: () => httpClient.get('/api/v1/auth/me')
-  },
-  
   // 管理后台
   admin: {
-    // 获取所有激活码
-    getAllCodes: (skip = 0, limit = 100) =>
-      httpClient.get(`/api/v1/admin/activation-codes?skip=${skip}&limit=${limit}`),
-    
-    // 获取所有支付记录
-    getAllPayments: (skip = 0, limit = 100) =>
-      httpClient.get(`/api/v1/admin/payments?skip=${skip}&limit=${limit}`),
-    
-    // 获取系统统计
-    getSystemStats: () => httpClient.get('/api/v1/admin/stats')
+    // 仪表盘统计（受保护）
+    getDashboardStats: () => httpClient.get('/api/v1/admin/stats'),
+    // 以下旧接口占位，避免现有页面报错
+    getAllCodes: () => httpClient.get('/api/v1/activation/stats'),
+    getAllPayments: () => httpClient.get('/api/v1/payment/list?skip=0&limit=20')
   }
 }
 

@@ -126,25 +126,9 @@ export default {
       verificationResult.value = null
       
       try {
-        // 这里应该调用API验证激活码
-        // const response = await api.verifyActivationCode({
-        //   code: activationCode.value,
-        //   user_id: userId.value
-        // })
-        
-        // 模拟验证结果
-        verificationResult.value = {
-          valid: true,
-          message: '激活码有效',
-          activation_code: {
-            code: activationCode.value,
-            product_name: '高级版许可证',
-            status: 'unused',
-            price: 99.00,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
-          }
-        }
+        // 调用后端验证激活码
+        const response = await api.activation.verifyCode(activationCode.value, userId.value || null)
+        verificationResult.value = response
         
       } catch (err) {
         error.value = '验证激活码失败，请重试'
@@ -161,15 +145,16 @@ export default {
       error.value = ''
       
       try {
-        // 这里应该调用API使用激活码
-        // const response = await api.useActivationCode({
-        //   code: activationCode.value,
-        //   user_id: userId.value
-        // })
-        
-        // 模拟使用成功
-        success.value = true
-        verificationResult.value.activation_code.status = 'used'
+        // 调用后端使用激活码
+        const resp = await api.activation.useCode(activationCode.value, userId.value || null)
+        if (resp && resp.success) {
+          success.value = true
+          if (verificationResult.value?.activation_code) {
+            verificationResult.value.activation_code.status = 'used'
+          }
+        } else {
+          throw new Error(resp?.message || '激活失败')
+        }
         
       } catch (err) {
         error.value = '激活失败，请重试'

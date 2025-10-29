@@ -7,7 +7,7 @@ import uuid
 from typing import Dict, Any, Optional
 from datetime import datetime
 
-from .base import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
+from . import PaymentProvider, PaymentResult, PaymentConfig, PaymentMethod
 
 class MockPaymentProvider(PaymentProvider):
     """模拟支付提供商（用于测试）"""

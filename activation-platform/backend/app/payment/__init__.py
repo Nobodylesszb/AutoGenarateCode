@@ -32,6 +32,7 @@ class PaymentMethod(Enum):
     STRIPE = "stripe"            # Stripe支付
     PAYPAL = "paypal"            # PayPal支付
     MOCK = "mock"                # 模拟支付（测试用）
+    PINGXX = "pingxx"            # Ping++ 聚合支付
 
 # 支付结果数据类
 @dataclass

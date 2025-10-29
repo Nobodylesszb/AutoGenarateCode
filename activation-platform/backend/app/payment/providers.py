@@ -2,10 +2,11 @@
 支付提供商注册和初始化
 """
 
-from .base import PaymentProviderFactory, PaymentMethod
+from . import PaymentProviderFactory, PaymentMethod
 from .wechat import WeChatPaymentProvider
 from .alipay import AlipayPaymentProvider
 from .mock import MockPaymentProvider
+from .pingxx import PingxxPaymentProvider
 
 def register_payment_providers():
     """注册所有支付提供商"""
@@ -22,6 +23,9 @@ def register_payment_providers():
     
     # 注册模拟支付
     PaymentProviderFactory.register_provider(PaymentMethod.MOCK, MockPaymentProvider)
+    
+    # 注册 Ping++
+    PaymentProviderFactory.register_provider(PaymentMethod.PINGXX, PingxxPaymentProvider)
 
 def get_payment_provider_info():
     """获取支付提供商信息"""

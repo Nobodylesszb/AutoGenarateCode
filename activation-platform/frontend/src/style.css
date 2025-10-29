@@ -1,0 +1,10 @@
+/* 全局基础样式，可按需扩展 */
+html, body, #app {
+  height: 100%;
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+

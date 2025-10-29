@@ -7,7 +7,7 @@ import logging
 from typing import Dict, Any, Optional, List
 from sqlalchemy.orm import Session
 
-from .base import (
+from . import (
     PaymentServiceManager, PaymentConfigManager, PaymentEventListener,
     PaymentStatisticsService, PaymentMethod, PaymentConfig, PaymentResult
 )
@@ -116,6 +116,19 @@ class PaymentManager:
                 }
             )
             self.service_manager.register_provider(PaymentMethod.MOCK, mock_config)
+            
+            # 注册 Ping++（若配置完整）
+            if getattr(settings, "PINGXX_API_KEY", None):
+                pingxx_config = PaymentConfig(
+                    method=PaymentMethod.PINGXX,
+                    app_id=getattr(settings, "PINGXX_APP_ID", None),
+                    api_key=getattr(settings, "PINGXX_API_KEY", None),
+                    private_key=getattr(settings, "PINGXX_PRIVATE_KEY", None),
+                    notify_url=getattr(settings, "PINGXX_NOTIFY_URL", None),
+                    sandbox=settings.DEBUG,
+                    extra_config={"currency": "CNY"}
+                )
+                self.service_manager.register_provider(PaymentMethod.PINGXX, pingxx_config)
             
             self.logger.info("支付提供商注册完成")
             

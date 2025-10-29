@@ -5,6 +5,7 @@ import uvicorn
 from app.config import settings
 from app.database import engine, Base
 from app.api import activation, payment, webhook
+from app.api import auth, admin
 from app.middleware.auth import get_current_user
 from app.middleware.cors import setup_cors
 
@@ -43,6 +44,18 @@ app.include_router(
     webhook.router,
     prefix="/api/v1/webhook",
     tags=["Webhook"]
+)
+
+app.include_router(
+    auth.router,
+    prefix="/api/v1",
+    tags=["认证"]
+)
+
+app.include_router(
+    admin.router,
+    prefix="/api/v1",
+    tags=["管理后台"]
 )
 
 @app.get("/")

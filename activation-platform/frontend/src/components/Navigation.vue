@@ -24,7 +24,7 @@
           激活验证
         </router-link>
         
-        <div class="nav-dropdown">
+        <div class="nav-dropdown" v-if="isAuthed">
           <button class="nav-link dropdown-toggle">
             <i class="fas fa-cog"></i>
             管理后台
@@ -43,6 +43,21 @@
         </div>
       </div>
       
+      <div class="nav-auth">
+        <template v-if="isAuthed">
+          <button class="nav-link" @click="logout">
+            <i class="fas fa-sign-out-alt"></i>
+            退出
+          </button>
+        </template>
+        <template v-else>
+          <router-link to="/auth" class="nav-link">
+            <i class="fas fa-user"></i>
+            登录
+          </router-link>
+        </template>
+      </div>
+
       <div class="nav-toggle" @click="toggleMobileMenu">
         <i class="fas fa-bars"></i>
       </div>
@@ -65,7 +80,7 @@
         激活验证
       </router-link>
       
-      <div class="mobile-section">
+      <div class="mobile-section" v-if="isAuthed">
         <div class="mobile-section-title">管理后台</div>
         <router-link to="/admin" class="mobile-link" @click="closeMobileMenu">
           <i class="fas fa-tachometer-alt"></i>
@@ -76,14 +91,34 @@
           支付管理
         </router-link>
       </div>
+
+      <div class="mobile-section">
+        <div class="mobile-section-title">账户</div>
+        <template v-if="isAuthed">
+          <button class="mobile-link" @click="handleMobileLogout">
+            <i class="fas fa-sign-out-alt"></i>
+            退出
+          </button>
+        </template>
+        <template v-else>
+          <router-link to="/auth" class="mobile-link" @click="closeMobileMenu">
+            <i class="fas fa-user"></i>
+            登录
+          </router-link>
+        </template>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const showMobileMenu = ref(false)
+const router = useRouter()
+
+const isAuthed = computed(() => !!localStorage.getItem('auth_token'))
 
 const toggleMobileMenu = () => {
   showMobileMenu.value = !showMobileMenu.value
@@ -91,6 +126,16 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   showMobileMenu.value = false
+}
+
+const logout = () => {
+  localStorage.removeItem('auth_token')
+  router.push('/')
+}
+
+const handleMobileLogout = () => {
+  logout()
+  closeMobileMenu()
 }
 </script>
 
@@ -214,6 +259,12 @@ const closeMobileMenu = () => {
   color: #6b7280;
   cursor: pointer;
   padding: 0.5rem;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .mobile-menu {

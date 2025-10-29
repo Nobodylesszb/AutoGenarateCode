@@ -9,6 +9,21 @@
         </div>
       </div>
       
+      <div class="card mb-2">
+        <h3 class="mb-2">使用趋势（最近7天）</h3>
+        <svg :width="chartWidth" :height="chartHeight">
+          <polyline
+            :points="polylinePoints"
+            fill="rgba(102,126,234,0.3)"
+            stroke="rgba(102,126,234,1)"
+            stroke-width="2"
+          />
+          <g v-for="(p,i) in plottedPoints" :key="i">
+            <circle :cx="p.x" :cy="p.y" r="3" fill="#4f46e5" />
+          </g>
+        </svg>
+      </div>
+      
       <div class="stats-grid">
         <div class="stat-card">
           <h3>总激活码数</h3>
@@ -187,8 +202,8 @@
               <label class="form-label">产品</label>
               <select v-model="generateForm.product_id" class="form-input" required>
                 <option value="">选择产品</option>
-                <option v-for="product in products" :key="product.id" :value="product.product_id">
-                  {{ product.name }}
+                <option v-for="product in products" :key="product.product_id || product.id" :value="product.product_id">
+                  {{ product.product_name || product.name }}
                 </option>
               </select>
             </div>
@@ -236,6 +251,7 @@ export default {
   setup() {
     const activeTab = ref('codes')
     const stats = ref({})
+    const trendPoints = ref([])
     const codes = ref([])
     const payments = ref([])
     const products = ref([])
@@ -254,6 +270,28 @@ export default {
       { key: 'payments', label: '支付记录' },
       { key: 'products', label: '产品管理' }
     ]
+    
+    // 简易折线图
+    const chartWidth = 600
+    const chartHeight = 200
+    const padding = 30
+    const plottedPoints = computed(() => {
+      if (!trendPoints.value.length) return []
+      const maxY = Math.max(...trendPoints.value.map(d => d.count), 1)
+      const stepX = (chartWidth - padding * 2) / (trendPoints.value.length - 1)
+      return trendPoints.value.map((d, i) => {
+        const x = padding + i * stepX
+        const y = padding + (1 - d.count / maxY) * (chartHeight - padding * 2)
+        return { x, y }
+      })
+    })
+    const polylinePoints = computed(() => {
+      if (!plottedPoints.value.length) return ''
+      const left = `${padding},${chartHeight - padding}`
+      const line = plottedPoints.value.map(p => `${p.x},${p.y}`).join(' ')
+      const right = `${padding + (plottedPoints.value.length - 1) * ((chartWidth - padding * 2) / (plottedPoints.value.length - 1))},${chartHeight - padding}`
+      return `${left} ${line} ${right}`
+    })
     
     const filteredCodes = computed(() => {
       if (!codeFilter.value) return codes.value
@@ -295,9 +333,15 @@ export default {
     
     const refreshData = async () => {
       try {
-        // 获取统计数据
-        const statsResponse = await api.activation.getStats()
-        stats.value = statsResponse
+        // 获取仪表盘统计（受保护）
+        const s = await api.admin.getDashboardStats()
+        stats.value = {
+          total: s.total_codes,
+          used: s.used_codes,
+          unused: (s.total_codes || 0) - (s.used_codes || 0),
+          expired: 0
+        }
+        trendPoints.value = s.usage_trend || []
         
         // 获取激活码列表
         const codesResponse = await api.admin.getAllCodes()
@@ -335,7 +379,7 @@ export default {
         
         await api.activation.generateCodes({
           product_id: generateForm.value.product_id,
-          product_name: product.name,
+          product_name: product.product_name || product.name,
           price: product.price,
           quantity: generateForm.value.quantity,
           expires_at: expireDate.toISOString()
@@ -387,6 +431,11 @@ export default {
       activeTab,
       tabs,
       stats,
+      chartWidth,
+      chartHeight,
+      plottedPoints,
+      polylinePoints,
+      trendPoints,
       codes,
       payments,
       products,

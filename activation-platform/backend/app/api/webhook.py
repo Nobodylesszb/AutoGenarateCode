@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import PaymentCallback
-from app.services.payment_service import PaymentService
+from app.payment.service import PaymentService
 
 router = APIRouter()
 
@@ -53,6 +53,27 @@ async def alipay_webhook(
         return "success"
     else:
         return "fail"
+
+@router.post("/payment/pingxx")
+async def pingxx_webhook(
+    request_obj: Request,
+    db: Session = Depends(get_db)
+):
+    """Ping++ 支付 Webhook（需配合签名验签）"""
+    service = PaymentService(db)
+    headers = dict(request_obj.headers)
+    signature = headers.get("X-Pingplusplus-Signature") or headers.get("x-pingplusplus-signature")
+    body = await request_obj.body()
+    # 这里将原始数据传入回调处理，验签逻辑在 provider 中进一步实现
+    callback = {
+        "signature": signature,
+        "body": body.decode("utf-8", errors="ignore"),
+        "headers": headers
+    }
+    result = service.handle_payment_callback(callback)
+    if result.get("success"):
+        return {"status": "ok"}
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.get("message") or "invalid signature")
 
 @router.post("/activation/notify")
 async def activation_notify(
