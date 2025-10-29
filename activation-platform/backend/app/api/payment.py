@@ -6,7 +6,7 @@ from app.schemas import (
     PaymentCreateWithProduct, PaymentSuccessResponse,
     PaymentRefundRequest, PaymentStatistics
 )
-from app.services.payment_service import PaymentService
+from app.payment.service import PaymentService
 from app.models import PaymentStatus
 
 router = APIRouter()

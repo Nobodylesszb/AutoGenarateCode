@@ -1,7 +1,6 @@
 import secrets
 import string
 import hashlib
-import wmi
 import hmac
 import time
 import uuid
@@ -64,10 +63,16 @@ class HardwareFingerprint:
     def _get_disk_serial() -> str:
         """获取磁盘序列号"""
         try:
-            c = wmi.WMI()
-            for disk in c.Win32_DiskDrive():
-                if disk.SerialNumber:
-                    return disk.SerialNumber
+            # 仅在 Windows 平台尝试使用 wmi 获取磁盘序列号
+            if platform.system().lower() == 'windows':
+                try:
+                    import wmi  # 延迟导入，避免非 Windows 平台依赖问题
+                    c = wmi.WMI()
+                    for disk in c.Win32_DiskDrive():
+                        if getattr(disk, 'SerialNumber', None):
+                            return disk.SerialNumber
+                except Exception:
+                    pass
         except:
             pass
         
@@ -97,11 +102,16 @@ class HardwareFingerprint:
     def _get_motherboard_info() -> str:
         """获取主板信息"""
         try:
-            import wmi
-            c = wmi.WMI()
-            for board in c.Win32_BaseBoard():
-                if board.SerialNumber:
-                    return board.SerialNumber
+            # 仅在 Windows 平台尝试使用 wmi 获取主板序列号
+            if platform.system().lower() == 'windows':
+                try:
+                    import wmi  # 延迟导入，避免非 Windows 平台依赖问题
+                    c = wmi.WMI()
+                    for board in c.Win32_BaseBoard():
+                        if getattr(board, 'SerialNumber', None):
+                            return board.SerialNumber
+                except Exception:
+                    pass
         except:
             pass
         

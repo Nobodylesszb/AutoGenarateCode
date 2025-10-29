@@ -13,7 +13,7 @@ from app.schemas import (
     ActivationCodeUseRequest
 )
 from app.services.activation_service import ActivationCodeService
-from app.services.payment_service import PaymentService
+from app.payment.service import PaymentService
 from app.models import ActivationCodeStatus
 
 router = APIRouter()
