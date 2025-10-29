@@ -10,6 +10,7 @@ import Purchase from './views/Purchase.vue'
 import Activation from './views/Activation.vue'
 import PaymentSuccess from './views/PaymentSuccess.vue'
 import PaymentAdmin from './views/PaymentAdmin.vue'
+import SimpleLogin from './views/SimpleLogin.vue'
 import Admin from './views/Admin.vue'
 
 // 路由配置
@@ -19,7 +20,8 @@ const routes = [
   { path: '/activation', name: 'Activation', component: Activation },
   { path: '/payment/success', name: 'PaymentSuccess', component: PaymentSuccess },
   { path: '/admin', name: 'Admin', component: Admin },
-  { path: '/admin/payments', name: 'PaymentAdmin', component: PaymentAdmin }
+  { path: '/admin/payments', name: 'PaymentAdmin', component: PaymentAdmin },
+  { path: '/auth', name: 'SimpleLogin', component: SimpleLogin }
 ]
 
 const router = createRouter({
