@@ -1,6 +1,7 @@
 import secrets
 import string
 import hashlib
+import wmi
 import hmac
 import time
 import uuid
@@ -63,7 +64,6 @@ class HardwareFingerprint:
     def _get_disk_serial() -> str:
         """获取磁盘序列号"""
         try:
-            import wmi
             c = wmi.WMI()
             for disk in c.Win32_DiskDrive():
                 if disk.SerialNumber:
@@ -165,6 +165,7 @@ class HardwareBindingService:
             # 验证硬件指纹格式
             if not HardwareFingerprint.validate_fingerprint(hardware_fingerprint):
                 return {
+                    
                     "success": False,
                     "message": "无效的硬件指纹格式"
                 }
