@@ -1,0 +1,93 @@
+---
+globs: *api*,*service*,*endpoint*
+description: API 开发和服务层规范
+---
+
+# API 开发规范
+
+## API 设计原则
+- RESTful API 设计
+- 使用 HTTP 状态码表示操作结果
+- 统一的响应格式
+- 适当的错误处理
+
+## 响应格式
+```typescript
+// 成功响应
+interface ApiResponse<T> {
+  success: true;
+  data: T;
+  message?: string;
+}
+
+// 错误响应
+interface ApiError {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+}
+```
+
+## 服务层组织
+```typescript
+// API 服务示例
+class UserService {
+  private baseUrl = process.env.REACT_APP_API_URL;
+  
+  async getUser(id: string): Promise<User> {
+    try {
+      const response = await fetch(`${this.baseUrl}/users/${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('获取用户失败:', error);
+      throw error;
+    }
+  }
+  
+  async createUser(userData: CreateUserRequest): Promise<User> {
+    const response = await fetch(`${this.baseUrl}/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`创建用户失败: ${response.statusText}`);
+    }
+    
+    return await response.json();
+  }
+}
+```
+
+## 错误处理
+- 使用 try-catch 处理异步操作
+- 提供有意义的错误信息
+- 区分网络错误和业务错误
+- 实现重试机制
+
+## 请求拦截
+- 添加认证头
+- 处理请求超时
+- 统一错误处理
+- 请求日志记录
+
+## 缓存策略
+- 使用适当的 HTTP 缓存头
+- 实现客户端缓存
+- 考虑数据新鲜度
+- 避免缓存敏感数据
+
+## 安全性
+- 验证所有输入数据
+- 使用 HTTPS
+- 实施适当的认证和授权
+- 避免敏感信息泄露

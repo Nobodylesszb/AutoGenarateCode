@@ -1,0 +1,82 @@
+---
+description: 性能优化和最佳实践
+---
+
+# 性能优化规范
+
+## 前端性能优化
+
+### 代码分割
+- 使用 `React.lazy()` 进行组件懒加载
+- 实现路由级别的代码分割
+- 避免加载不必要的代码
+
+```typescript
+const LazyComponent = React.lazy(() => import('./LazyComponent'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LazyComponent />
+    </Suspense>
+  );
+}
+```
+
+### 渲染优化
+- 使用 `React.memo` 包装纯组件
+- 合理使用 `useMemo` 和 `useCallback`
+- 避免在渲染过程中创建新对象
+- 使用 `useMemo` 缓存计算结果
+
+### 图片优化
+- 使用适当的图片格式 (WebP, AVIF)
+- 实现图片懒加载
+- 提供多种尺寸的图片
+- 使用 CDN 加速图片加载
+
+### 网络优化
+- 启用 HTTP/2
+- 使用 CDN
+- 压缩静态资源
+- 实现缓存策略
+
+## 后端性能优化
+
+### 数据库优化
+- 使用适当的索引
+- 避免 N+1 查询问题
+- 使用连接池
+- 实现查询缓存
+
+### API 优化
+- 实现分页
+- 使用 GraphQL 减少过度获取
+- 实现 API 缓存
+- 使用适当的 HTTP 状态码
+
+### 服务器优化
+- 使用负载均衡
+- 实现水平扩展
+- 监控服务器性能
+- 优化内存使用
+
+## 监控和分析
+
+### 性能指标
+- First Contentful Paint (FCP)
+- Largest Contentful Paint (LCP)
+- Cumulative Layout Shift (CLS)
+- First Input Delay (FID)
+
+### 工具推荐
+- Lighthouse: 性能审计
+- WebPageTest: 详细性能分析
+- Chrome DevTools: 开发时性能调试
+- Bundle Analyzer: 包大小分析
+
+## 最佳实践
+- 定期进行性能审计
+- 监控关键性能指标
+- 实施渐进式优化
+- 考虑用户体验影响

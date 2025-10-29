@@ -1,0 +1,95 @@
+---
+globs: *.test.*,*.spec.*,*test*,*spec*
+description: 测试开发规范和最佳实践
+---
+
+# 测试开发规范
+
+## 测试策略
+- 单元测试：测试单个函数或组件
+- 集成测试：测试模块间的交互
+- 端到端测试：测试完整的用户流程
+- 测试覆盖率目标：80% 以上
+
+## 测试文件组织
+```
+src/
+├── components/
+│   ├── Button.tsx
+│   └── Button.test.tsx
+├── utils/
+│   ├── helpers.ts
+│   └── helpers.test.ts
+└── __tests__/
+    ├── setup.ts
+    └── mocks/
+```
+
+## 测试命名规范
+```typescript
+// 测试描述格式：应该 + 预期结果 + 给定条件
+describe('UserService', () => {
+  describe('getUser', () => {
+    it('应该返回用户数据当用户ID有效时', async () => {
+      // 测试实现
+    });
+    
+    it('应该抛出错误当用户ID无效时', async () => {
+      // 测试实现
+    });
+  });
+});
+```
+
+## 测试结构 (AAA 模式)
+```typescript
+it('应该计算正确的总价', () => {
+  // Arrange - 准备测试数据
+  const items = [
+    { price: 10, quantity: 2 },
+    { price: 5, quantity: 3 }
+  ];
+  
+  // Act - 执行被测试的功能
+  const total = calculateTotal(items);
+  
+  // Assert - 验证结果
+  expect(total).toBe(35);
+});
+```
+
+## Mock 使用
+- Mock 外部依赖
+- 使用 Jest 的 mock 功能
+- 避免过度 Mock
+- 保持 Mock 的简单性
+
+## 异步测试
+```typescript
+it('应该处理异步操作', async () => {
+  const mockData = { id: 1, name: 'Test' };
+  jest.spyOn(api, 'fetchData').mockResolvedValue(mockData);
+  
+  const result = await fetchUserData(1);
+  
+  expect(result).toEqual(mockData);
+  expect(api.fetchData).toHaveBeenCalledWith(1);
+});
+```
+
+## 组件测试
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './Button';
+
+it('应该渲染按钮并处理点击事件', () => {
+  const handleClick = jest.fn();
+  
+  render(<Button onClick={handleClick}>Click me</Button>);
+  
+  const button = screen.getByText('Click me');
+  fireEvent.click(button);
+  
+  expect(handleClick).toHaveBeenCalledTimes(1);
+});
+```

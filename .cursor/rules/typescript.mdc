@@ -1,0 +1,58 @@
+---
+globs: *.ts,*.tsx
+description: TypeScript 特定规则和最佳实践
+---
+
+# TypeScript 开发规范
+
+## 类型定义
+- 优先使用接口而不是类型别名，除非需要联合类型或计算属性
+- 为所有函数参数和返回值定义类型
+- 避免使用 `any` 类型，使用 `unknown` 或具体类型
+- 使用泛型提高代码复用性
+
+## 接口设计
+```typescript
+// 好的接口设计
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: Date;
+}
+
+// 避免过度复杂的接口
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  profile?: {
+    avatar?: string;
+    bio?: string;
+    settings?: {
+      theme?: 'light' | 'dark';
+      notifications?: boolean;
+    };
+  };
+}
+```
+
+## 函数类型
+- 使用函数重载处理多种参数类型
+- 优先使用箭头函数语法
+- 为异步函数明确返回 Promise 类型
+
+## 错误处理
+- 使用 Result 模式或自定义错误类型
+- 避免抛出原始字符串错误
+- 使用类型守卫进行类型检查
+
+## 模块导入导出
+- 使用命名导出而不是默认导出
+- 明确导入类型: `import type { User } from './types'`
+- 避免循环依赖
+
+## 工具类型使用
+- 充分利用 TypeScript 内置工具类型
+- 创建自定义工具类型提高代码复用性
+- 使用 `const assertions` 提高类型推断

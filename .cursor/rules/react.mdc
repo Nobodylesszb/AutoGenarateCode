@@ -1,0 +1,76 @@
+---
+globs: *.tsx,*.jsx
+description: React 组件开发规范
+---
+
+# React 组件开发规范
+
+## 组件设计原则
+- 单一职责：每个组件只负责一个功能
+- 可复用性：设计通用的组件接口
+- 可测试性：组件应该易于测试
+- 性能优化：避免不必要的重渲染
+
+## 组件结构
+```tsx
+// 推荐的组件结构
+import React, { useState, useEffect } from 'react';
+import type { FC } from 'react';
+
+interface Props {
+  title: string;
+  onSave: (data: FormData) => void;
+}
+
+export const UserForm: FC<Props> = ({ title, onSave }) => {
+  // 1. 状态定义
+  const [formData, setFormData] = useState<FormData>({});
+  
+  // 2. 副作用
+  useEffect(() => {
+    // 副作用逻辑
+  }, []);
+  
+  // 3. 事件处理函数
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+  
+  // 4. 渲染逻辑
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>{title}</h2>
+      {/* 表单内容 */}
+    </form>
+  );
+};
+```
+
+## Hooks 使用规范
+- 自定义 Hook 以 `use` 开头
+- 在组件顶层调用 Hooks
+- 使用 `useMemo` 和 `useCallback` 优化性能
+- 避免在循环或条件语句中调用 Hooks
+
+## 状态管理
+- 本地状态使用 `useState`
+- 复杂状态使用 `useReducer`
+- 全局状态考虑使用 Context 或状态管理库
+- 避免过度使用状态
+
+## 事件处理
+- 使用箭头函数定义事件处理器
+- 避免在 JSX 中直接定义函数
+- 使用 `useCallback` 优化事件处理器
+
+## 样式处理
+- 使用 CSS Modules 或 styled-components
+- 避免内联样式
+- 保持样式的可维护性
+
+## 性能优化
+- 使用 `React.memo` 包装纯组件
+- 合理使用 `useMemo` 和 `useCallback`
+- 避免在渲染过程中创建新对象
+- 使用 `React.lazy` 进行代码分割

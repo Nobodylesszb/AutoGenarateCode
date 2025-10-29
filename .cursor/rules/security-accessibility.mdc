@@ -1,0 +1,118 @@
+---
+description: 安全性和可访问性开发规范
+---
+
+# 安全性和可访问性规范
+
+## 安全性最佳实践
+
+### 输入验证
+- 验证所有用户输入
+- 使用白名单而不是黑名单
+- 实施服务器端验证
+- 防止 SQL 注入和 XSS 攻击
+
+### 认证和授权
+- 使用强密码策略
+- 实施多因素认证
+- 使用 JWT 进行会话管理
+- 实施适当的权限控制
+
+### 数据保护
+- 加密敏感数据
+- 使用 HTTPS 传输数据
+- 避免在客户端存储敏感信息
+- 实施数据脱敏
+
+### 前端安全
+```typescript
+// 防止 XSS 攻击
+const sanitizeInput = (input: string): string => {
+  return input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+};
+
+// 安全的 API 调用
+const apiCall = async (url: string, data: any) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': getCSRFToken(),
+    },
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    throw new Error('API call failed');
+  }
+  
+  return response.json();
+};
+```
+
+## 可访问性 (A11y) 规范
+
+### 语义化 HTML
+- 使用适当的 HTML 标签
+- 提供有意义的标题层次
+- 使用 `alt` 属性描述图片
+- 使用 `label` 关联表单元素
+
+### 键盘导航
+- 确保所有功能可通过键盘访问
+- 提供清晰的焦点指示
+- 实现合理的 Tab 顺序
+- 支持键盘快捷键
+
+### 屏幕阅读器支持
+```tsx
+// 提供适当的 ARIA 标签
+<button
+  aria-label="关闭对话框"
+  aria-expanded={isOpen}
+  onClick={handleClose}
+>
+  <CloseIcon aria-hidden="true" />
+</button>
+
+// 使用语义化标签
+<main>
+  <h1>页面标题</h1>
+  <section aria-labelledby="content-heading">
+    <h2 id="content-heading">内容标题</h2>
+    <p>内容描述</p>
+  </section>
+</main>
+```
+
+### 颜色和对比度
+- 确保足够的颜色对比度 (至少 4.5:1)
+- 不要仅依赖颜色传达信息
+- 支持高对比度模式
+- 考虑色盲用户的需求
+
+### 响应式设计
+- 支持多种屏幕尺寸
+- 使用相对单位而不是绝对单位
+- 确保触摸目标足够大 (至少 44px)
+- 测试不同设备的兼容性
+
+## 测试和验证
+
+### 安全测试
+- 定期进行安全审计
+- 使用自动化安全扫描工具
+- 实施渗透测试
+- 监控安全漏洞
+
+### 可访问性测试
+- 使用屏幕阅读器测试
+- 进行键盘导航测试
+- 使用可访问性检查工具
+- 进行用户测试
+
+## 工具推荐
+- ESLint 安全插件
+- axe-core 可访问性测试
+- Lighthouse 可访问性审计
+- WAVE 可访问性评估工具
